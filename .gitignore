@@ -1,0 +1,19 @@
+### Main Control Unit ###
+
+control/main-control-unit/nbproject/private/
+control/main-control-unit/build/
+control/main-control-unit/nbbuild/
+control/main-control-unit/dist/
+control/main-control-unit/nbdist/
+control/main-control-unit/nbactions.xml
+control/main-control-unit/nb-configuration.xml
+
+### Java ###
+
+# Class Files #
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
