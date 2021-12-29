@@ -1,1 +1,1 @@
-# Main control program
+# Main control unit
