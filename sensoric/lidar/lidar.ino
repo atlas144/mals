@@ -64,6 +64,4 @@ void loop() {
   data[0] = motorSteps;
   data[1] = distance & 0xff;
   data[2] = (distance >> 8) & 0xff;
-
-  readSuccess = false;
 }
