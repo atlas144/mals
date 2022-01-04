@@ -23,8 +23,8 @@ bool readSuccess = false;
 
 uint8_t motorSteps = 0;
 bool motorDirection = true;  // 1 - forward, 0 - backwards
-uint8_t movesPerMeasurement = 50 / (8 * stepDelay);
-uint8_t additionalMeasurementDelay = 50 % (8 * stepDelay);
+uint8_t movesPerMeasurement = 10 / (8 * stepDelay);
+uint8_t additionalMeasurementDelay = 10 % (8 * stepDelay);
 
 void twiRequestCallback() {
   Wire.write(data, 3);
@@ -36,8 +36,7 @@ void setup() {
   Wire.begin(TWI_ADDRESS);
   Wire.onRequest(twiRequestCallback);
   
-  lidar.begin(&Serial);
-  lidar.sendCommand(SET_FRAME_RATE, FRAME_20);
+  lidar.begin(&Serial);                                     // lidar starts with default values (baud-rate = 115200 Bd and frame-rate = 100 Hz)
 }
 
 void loop() {
@@ -57,7 +56,7 @@ void loop() {
   readSuccess = lidar.getData(distance, flux, temperature);
 
   while ((!readSuccess) || flux < 1000) {
-    delay(50);
+    delay(10);
     readSuccess = lidar.getData(distance, flux, temperature);
   }
 
