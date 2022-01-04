@@ -21,6 +21,8 @@ bool readSuccess = false;
 
 uint8_t motorSteps = 0;
 bool motorDirection = true;  // 1 - forward, 0 - backwards
+uint8_t movesPerMeasurement = 50 / (8 * stepDelay);
+uint8_t additionalMeasurementDelay = 50 % (8 * stepDelay);
 
 void twiRequestCallback() {
   Wire.write(distance);
@@ -37,7 +39,7 @@ void setup() {
 }
 
 void loop() {
-  for (uint8_t i = 0; i < 6; i++) {
+  for (uint8_t i = 0; i < movesPerMeasurement; i++) {
     if (motorDirection) {
       motorSteps++;
       stepper.moveForward();
@@ -49,7 +51,7 @@ void loop() {
     }
   }
 
-  delay(2);
+  delay(additionalMeasurementDelay);
   readSuccess = lidar.getData(distance, flux, temperature);
 
   while ((!readSuccess) || flux < 1000) {
