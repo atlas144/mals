@@ -13,6 +13,8 @@ uint8_t stepDelay = 1;
 TFMPlus lidar;
 StepperMotor stepper(STEPPER1, STEPPER2, STEPPER3, STEPPER4, stepDelay);
 
+uint8_t data[] = {0, 0, 0};                                 // {motorSteps, distance (byte 0), distance (byte 1)}
+
 int16_t distance = 0;
 int16_t flux = 0;
 int16_t temperature = 0;
@@ -25,7 +27,7 @@ uint8_t movesPerMeasurement = 50 / (8 * stepDelay);
 uint8_t additionalMeasurementDelay = 50 % (8 * stepDelay);
 
 void twiRequestCallback() {
-  Wire.write(distance);
+  Wire.write(data, 3);
 }
 
 void setup() {
@@ -58,6 +60,10 @@ void loop() {
     delay(50);
     readSuccess = lidar.getData(distance, flux, temperature);
   }
+
+  data[0] = motorSteps;
+  data[1] = distance & 0xff;
+  data[2] = (distance >> 8) & 0xff;
 
   readSuccess = false;
 }
