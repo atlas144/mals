@@ -1,4 +1,5 @@
 #include <Protorduino.h>
+#include <SoftwareSerial.h>   
 #include <TFMPlus.h>
 #include <StepperMotor.h>
 #include <Wire.h>
@@ -12,6 +13,7 @@ const uint8_t STEPPER4 = 11;
 uint8_t stepDelay = 1;
 
 Protorduino protorduino(2);
+SoftwareSerial swSerial(10, 11); 
 TFMPlus lidar;
 StepperMotor stepper(STEPPER1, STEPPER2, STEPPER3, STEPPER4, stepDelay);
 
@@ -63,17 +65,18 @@ void movementTask() {
 
 void setup() {
   Serial.begin(115200);
+  swSerial.begin(115200);
 
-  protorduino.registerTask(&measurementTask, 10, 1);
+  protorduino.registerTask(&measurementTask, 1000, 1);
   Serial.println("[PRO] - OK - measurementTask registered successfully");
-  protorduino.registerTask(&movementTask, 8, 2);
+  protorduino.registerTask(&movementTask, 800, 2);
   Serial.println("[PRO] - OK - movementTask registered successfully");
   
   Wire.begin(TWI_ADDRESS);
   Wire.onRequest(twiRequestCallback);
   Serial.println("[TWI] - OK - initialized successfully");
   
-  lidar.begin(&Serial);                                     // lidar starts with default values (baud-rate = 115200 Bd and frame-rate = 100 Hz)
+  lidar.begin(&swSerial);                                     // lidar starts with default values (baud-rate = 115200 Bd and frame-rate = 100 Hz)
   Serial.println("[LID] - OK - initialized successfully");
 }
 
