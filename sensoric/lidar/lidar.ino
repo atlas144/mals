@@ -1,3 +1,4 @@
+#include <Protorduino.h>
 #include <TFMPlus.h>
 #include <StepperMotor.h>
 #include <Wire.h>
@@ -10,6 +11,7 @@
 
 uint8_t stepDelay = 1;
 
+Protorduino protorduino(2);
 TFMPlus lidar;
 StepperMotor stepper(STEPPER1, STEPPER2, STEPPER3, STEPPER4, stepDelay);
 
@@ -30,8 +32,33 @@ void twiRequestCallback() {
   Wire.write(data, 3);
 }
 
+void measurementTask() {
+  readSuccess = lidar.getData(distance, flux, temperature);
+  
+  if (readSuccess && flux > 1000) {
+    data[0] = motorSteps;
+    data[1] = distance & 0xff;
+    data[2] = (distance >> 8) & 0xff;
+  }
+}
+
+void movementTask() {
+  if (motorDirection) {
+    motorSteps++;
+    stepper.moveForward();
+    motorDirection = motorSteps < 127;
+  } else {
+    motorSteps--;
+    stepper.moveBackwards();
+    motorDirection = motorSteps > 0;
+  }
+}
+
 void setup() {
   Serial.begin(115200);
+
+  protorduino.registerTask(&measurementTask, 10, 1);
+  protorduino.registerTask(&movementTask, 8, 2);
   
   Wire.begin(TWI_ADDRESS);
   Wire.onRequest(twiRequestCallback);
@@ -40,27 +67,5 @@ void setup() {
 }
 
 void loop() {
-  for (uint8_t i = 0; i < movesPerMeasurement; i++) {
-    if (motorDirection) {
-      motorSteps++;
-      stepper.moveForward();
-      motorDirection = motorSteps < 127;
-    } else {
-      motorSteps--;
-      stepper.moveBackwards();
-      motorDirection = motorSteps > 0;
-    }
-  }
-
-  delay(additionalMeasurementDelay);
-  readSuccess = lidar.getData(distance, flux, temperature);
-
-  while ((!readSuccess) || flux < 1000) {
-    delay(10);
-    readSuccess = lidar.getData(distance, flux, temperature);
-  }
-
-  data[0] = motorSteps;
-  data[1] = distance & 0xff;
-  data[2] = (distance >> 8) & 0xff;
+  protorduino.execute();
 }
