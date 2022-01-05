@@ -5,10 +5,10 @@
 #include <Wire.h>
 
 const uint8_t TWI_ADDRESS = 0xA0;
-const uint8_t STEPPER1 = 8;
-const uint8_t STEPPER2 = 9;
-const uint8_t STEPPER3 = 10;
-const uint8_t STEPPER4 = 11;
+const uint8_t STEPPER1 = 6;
+const uint8_t STEPPER2 = 7;
+const uint8_t STEPPER3 = 8;
+const uint8_t STEPPER4 = 9;
 
 uint8_t stepDelay = 1;
 
@@ -67,9 +67,9 @@ void setup() {
   Serial.begin(115200);
   swSerial.begin(115200);
 
-  protorduino.registerTask(&measurementTask, 1000, 1);
+  protorduino.registerTask(&measurementTask, 10, 1);
   Serial.println("[PRO] - OK - measurementTask registered successfully");
-  protorduino.registerTask(&movementTask, 800, 2);
+  protorduino.registerTask(&movementTask, 8, 2);
   Serial.println("[PRO] - OK - movementTask registered successfully");
   
   Wire.begin(TWI_ADDRESS);
