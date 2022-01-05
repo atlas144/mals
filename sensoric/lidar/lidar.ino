@@ -54,12 +54,16 @@ void movementTask() {
     motorSteps++;
     stepper.moveForward();
     motorDirection = motorSteps < 127;
-    Serial.println("[STP] - OK - moved forward");
+    Serial.print("[STP] - OK - moved forward (angle ");
+    Serial.print(motorSteps);
+    Serial.println(")");
   } else {
     motorSteps--;
     stepper.moveBackwards();
     motorDirection = motorSteps > 0;
-    Serial.println("[STP] - OK - moved backwards");
+    Serial.print("[STP] - OK - moved backwards (angle ");
+    Serial.print(motorSteps);
+    Serial.println(")");
   }
 }
 
