@@ -25,11 +25,10 @@ bool readSuccess = false;
 
 uint8_t motorSteps = 0;
 bool motorDirection = true;  // 1 - forward, 0 - backwards
-uint8_t movesPerMeasurement = 10 / (8 * stepDelay);
-uint8_t additionalMeasurementDelay = 10 % (8 * stepDelay);
 
 void twiRequestCallback() {
   Wire.write(data, 3);
+  Serial.println("[TWI] - OK - data successfully written");
 }
 
 void measurementTask() {
@@ -39,6 +38,12 @@ void measurementTask() {
     data[0] = motorSteps;
     data[1] = distance & 0xff;
     data[2] = (distance >> 8) & 0xff;
+    
+    Serial.print("[LID] - OK - measurement successfull (");
+    Serial.print(distance);
+    Serial.println(")");
+  } else {
+    Serial.println("[LID] - ERR - measurement unsuccessfull");
   }
 }
 
@@ -47,10 +52,12 @@ void movementTask() {
     motorSteps++;
     stepper.moveForward();
     motorDirection = motorSteps < 127;
+    Serial.println("[STP] - OK - moved forward");
   } else {
     motorSteps--;
     stepper.moveBackwards();
     motorDirection = motorSteps > 0;
+    Serial.println("[STP] - OK - moved backwards");
   }
 }
 
@@ -58,12 +65,16 @@ void setup() {
   Serial.begin(115200);
 
   protorduino.registerTask(&measurementTask, 10, 1);
+  Serial.println("[PRO] - OK - measurementTask registered successfully");
   protorduino.registerTask(&movementTask, 8, 2);
+  Serial.println("[PRO] - OK - movementTask registered successfully");
   
   Wire.begin(TWI_ADDRESS);
   Wire.onRequest(twiRequestCallback);
+  Serial.println("[TWI] - OK - initialized successfully");
   
   lidar.begin(&Serial);                                     // lidar starts with default values (baud-rate = 115200 Bd and frame-rate = 100 Hz)
+  Serial.println("[LID] - OK - initialized successfully");
 }
 
 void loop() {
