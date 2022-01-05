@@ -3,11 +3,11 @@
 #include <StepperMotor.h>
 #include <Wire.h>
 
-#define TWI_ADDRESS   0xA0
-#define STEPPER1      8
-#define STEPPER2      9
-#define STEPPER3      10
-#define STEPPER4      11
+const uint8_t TWI_ADDRESS = 0xA0;
+const uint8_t STEPPER1 = 8;
+const uint8_t STEPPER2 = 9;
+const uint8_t STEPPER3 = 10;
+const uint8_t STEPPER4 = 11;
 
 uint8_t stepDelay = 1;
 
