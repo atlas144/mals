@@ -48,6 +48,21 @@ void requestSensorData(Sensor sensor) {
   }
 }
 
+void bumperTask() {
+  if (frontInterrupted) {
+    srsc.writePacket(0x60);
+
+    frontInterrupted = false;
+  }
+
+  
+  if (backInterrupted) {
+    srsc.writePacket(0x61);
+
+    backInterrupted = false;
+  }
+}
+
 void srscLoopTask() {
   srsc.loop();
 }
@@ -62,26 +77,26 @@ void lidarTask() {
     lidarBuffer[2]
   };
 
-  srsc.writeBinaryPacket(0x60, lidarData);
-  srsc.writePacket(0x61, lidarBuffer[0]);
+  srsc.writeBinaryPacket(0x62, lidarData);
+  srsc.writePacket(0x63, lidarBuffer[0]);
 }
 
 void frontSonarsTask() {
   requestSensorData(frontSonars);
 
-  srsc.writeBinaryPacket(0x62, frontSonars.getData());
+  srsc.writeBinaryPacket(0x64, frontSonars.getData());
 }
 
 void backSonarsTask() {
   requestSensorData(backSonars);
 
-  srsc.writeBinaryPacket(0x63, backSonars.getData());
+  srsc.writeBinaryPacket(0x65, backSonars.getData());
 }
 
 void lineTrackingSensorTask() {
   requestSensorData(lineTrackingSensor);
 
-  srsc.writeBinaryPacket(0x64, lineTrackingSensor.getData());
+  srsc.writeBinaryPacket(0x66, lineTrackingSensor.getData());
 }
 
 void setup() {
@@ -93,26 +108,32 @@ void setup() {
   srsc.begin();
   Serial.println("[SSC] - OK - initialized successfully");
 
-  srsc.definePacketType(0x60, SHORT);
-  Serial.println("[SSC] - OK - \"lidar data\" packet defined successfully");
-  srsc.definePacketType(0x61, BYTE);
-  Serial.println("[SSC] - OK - \"lidar orientation\" packet defined successfully");
+  srsc.definePacketType(0x60, COMMAND, true);
+  Serial.println("[SSC] - OK - \"front bumper\" packet defined successfully");
+  srsc.definePacketType(0x61, COMMAND, true);
+  Serial.println("[SSC] - OK - \"back bumper\" packet defined successfully");
   srsc.definePacketType(0x62, SHORT);
+  Serial.println("[SSC] - OK - \"lidar data\" packet defined successfully");
+  srsc.definePacketType(0x63, BYTE);
+  Serial.println("[SSC] - OK - \"lidar orientation\" packet defined successfully");
+  srsc.definePacketType(0x64, SHORT);
   Serial.println("[SSC] - OK - \"front sonars data\" packet defined successfully");
-  srsc.definePacketType(0x63, SHORT);
+  srsc.definePacketType(0x65, SHORT);
   Serial.println("[SSC] - OK - \"back sonars data\" packet defined successfully");
-  srsc.definePacketType(0x64, INT);
+  srsc.definePacketType(0x66, INT);
   Serial.println("[SSC] - OK - \"line tracking sensor data\" packet defined successfully");
   
-  protorduino.registerTask(&srscLoopTask, 1, 1);
+  protorduino.registerTask(&bumperTask, 1, 1);
+  Serial.println("[PRO] - OK - bumperTask registered successfully");
+  protorduino.registerTask(&srscLoopTask, 1, 2);
   Serial.println("[PRO] - OK - srscLoopTask registered successfully");
-  protorduino.registerTask(&lidarTask, lidar.getCycleDuration(), 2);
+  protorduino.registerTask(&lidarTask, lidar.getCycleDuration(), 3);
   Serial.println("[PRO] - OK - lidarTask registered successfully");
-  protorduino.registerTask(&frontSonarsTask, frontSonars.getCycleDuration(), 3);
+  protorduino.registerTask(&frontSonarsTask, frontSonars.getCycleDuration(), 4);
   Serial.println("[PRO] - OK - frontSonarsTask registered successfully");
-  protorduino.registerTask(&backSonarsTask, backSonars.getCycleDuration(), 4);
+  protorduino.registerTask(&backSonarsTask, backSonars.getCycleDuration(), 5);
   Serial.println("[PRO] - OK - backSonarsTask registered successfully");
-  protorduino.registerTask(&lineTrackingSensorTask, lineTrackingSensor.getCycleDuration(), 5);
+  protorduino.registerTask(&lineTrackingSensorTask, lineTrackingSensor.getCycleDuration(), 6);
   Serial.println("[PRO] - OK - lineTrackingSensorTask registered successfully");
 
   attachInterrupt(digitalPinToInterrupt(frontInterruptPin), frontInterrupt, RISING);
