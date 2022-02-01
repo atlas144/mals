@@ -16,7 +16,7 @@ import ModulesBoard from "./components/modulesBoard/ModulesBoard.vue";
     ModulesBoard,
   },
 })
-export default class App extends Vue { }
+export default class App extends Vue {}
 </script>
 
 <style>

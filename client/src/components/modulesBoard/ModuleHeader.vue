@@ -13,7 +13,7 @@ import { Options, Vue } from "vue-class-component";
     name: {
       type: String,
       required: false,
-      default: 'Unknown module',
+      default: "Unknown module",
     },
   },
 })
@@ -28,6 +28,7 @@ h1 {
   font-weight: bold;
   text-align: left;
 }
+
 hr {
   border: solid 2px #4e9f3d;
 }

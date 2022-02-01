@@ -8,7 +8,12 @@ export default class ModuleProperties {
   public x = 0;
   public y = 0;
 
-  public constructor(name: string, identifier: string, width: number, height: number) {
+  public constructor(
+    name: string,
+    identifier: string,
+    width: number,
+    height: number
+  ) {
     this.i = name;
     this.identifier = identifier;
     this.w = width;
