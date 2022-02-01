@@ -1,16 +1,18 @@
 <template>
   <div>
-    <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/open-sauce-two" type="text/css"/>
+    <BoardHeader />
     <ModulesBoard />
   </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
+import BoardHeader from "./components/boardHeader/BoardHeader.vue";
 import ModulesBoard from "./components/modulesBoard/ModulesBoard.vue";
 
 @Options({
   components: {
+    BoardHeader,
     ModulesBoard,
   },
 })
