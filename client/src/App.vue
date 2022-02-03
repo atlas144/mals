@@ -10,7 +10,7 @@ import BoardHeader from "./components/boardHeader/BoardHeader.vue";
 import ModulesBoard from "./components/modulesBoard/ModulesBoard.vue";
 
 export default {
-  name: 'App',
+  name: 'M.A.L.S. client',
   components: {
     BoardHeader,
     ModulesBoard,
