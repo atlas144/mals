@@ -8,13 +8,15 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Vue } from "vue-class-component";
-
-export default class BoardHeader extends Vue {
-  public logo = "M.A.L.S.";
-  public description1Line = "Control board of";
-  public description2Line = "mobile robotic system M.A.L.S.";
+<script>
+export default {
+  data() {
+    return {
+      logo: "M.A.L.S.",
+      description1Line: "Control board of",
+      description2Line: "mobile robotic system M.A.L.S.",
+    }
+  },
 }
 </script>
 

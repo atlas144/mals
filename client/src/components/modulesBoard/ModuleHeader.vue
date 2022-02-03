@@ -5,20 +5,15 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
-
-@Options({
+<script>
+export default {
   props: {
     name: {
       type: String,
       required: false,
       default: "Unknown module",
-    },
-  },
-})
-export default class ModuleHeader extends Vue {
-  public name!: string;
+    }
+  }
 }
 </script>
 

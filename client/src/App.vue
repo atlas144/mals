@@ -5,18 +5,17 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
+<script>
 import BoardHeader from "./components/boardHeader/BoardHeader.vue";
 import ModulesBoard from "./components/modulesBoard/ModulesBoard.vue";
 
-@Options({
+export default {
+  name: 'App',
   components: {
     BoardHeader,
     ModulesBoard,
-  },
-})
-export default class App extends Vue {}
+  }
+}
 </script>
 
 <style>
