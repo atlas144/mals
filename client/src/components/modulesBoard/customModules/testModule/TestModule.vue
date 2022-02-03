@@ -29,6 +29,9 @@ import WebSocketsModule from "../../../../WebSocketsModule";
 
 export default {
   props: {
+    /**
+     * Module for communication with the server.
+     */
     webSocketsModule: {
       type: WebSocketsModule,
       required: true,
@@ -36,15 +39,24 @@ export default {
   },
   data() {
     return {
+      // Required identifier of the module.
       moduleIdentifier: "TestModule",
+      // An example of user input variable.
       testInputValue: "",
+      // An example of server data variable.
       testValue: "-",
     }
   },
   methods: {
+    /**
+     * A method that processes received messages.
+     */
     onMessageCallback(message) {
       this.testValue = message.testValue;
     },
+    /**
+     * An example of a method that processes user changes and sends them to the server.
+     */
     sendTestMessage() {
       if (this.webSocketsModule.isOpen()) {
         this.webSocketsModule.sendMessage(this.moduleIdentifier, {
@@ -53,6 +65,9 @@ export default {
       }
     }
   },
+  /**
+   * Here should be registered a callback to receive messages.
+   */
   created() {
     if (this.webSocketsModule !== undefined) {
       this.webSocketsModule.registerCallback(

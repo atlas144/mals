@@ -45,7 +45,9 @@ export default {
   },
   data() {
     return {
+      // module for communication with server
       webSocketsModule: new WebSocketsModule("localhost", 443),
+      // parameters of visual objects of modules
       modules: [{
         name: "Test module",
         i: "TestModule",
@@ -55,6 +57,7 @@ export default {
         x: 0,
         y: 0,
       }],
+      // parameters of board layout
       layoutSettings: {
         columNumber: 12,
         rowHeight: 20,

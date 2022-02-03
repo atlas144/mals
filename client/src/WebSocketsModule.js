@@ -34,6 +34,11 @@ export default class WebSocketsModule {
     };
   }
 
+  /**
+   * Registers on message callback.
+   * @param {String} moduleIdentifier identifier of module of the callback
+   * @param {() => void} callback hook to be triggered when message for corresponding module arrives
+   */
   registerCallback(
     moduleIdentifier,
     callback
@@ -44,6 +49,11 @@ export default class WebSocketsModule {
     );
   }
 
+  /**
+   * Sends message to the server.
+   * @param {String} moduleIdentifier identifier of the module which sends the message
+   * @param {Message} message object containing data to be sent
+   */
   sendMessage(moduleIdentifier, message) {
     this.connection.send(
       JSON.stringify({
@@ -54,6 +64,10 @@ export default class WebSocketsModule {
     console.log(`Message successfully sent to ${moduleIdentifier} module`);
   }
 
+  /**
+   * Indicates whether the WebSockets connection is active.
+   * @returns true if connection is active
+   */
   isOpen() {
     return this.connection.readyState === 1;
   }
