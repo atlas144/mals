@@ -1,6 +1,7 @@
 package maincontrolunit;
 
 import malscontrolplatform.MalsControlPlatform;
+import srsc.exceptions.UnknownPortException;
 
 /**
  *
@@ -16,9 +17,13 @@ public class MainControlUnit {
     public MainControlUnit() {
         controlPlatform = new MalsControlPlatform(webHost, webPort);
         
-        // register modules
-        
-        controlPlatform.start();
+        try {
+            controlPlatform.registerModule(new SubsystemsControlUnitModule("Subsystems Control Unit Module"));
+            
+            controlPlatform.start();
+        } catch (UnknownPortException exception) {
+            System.out.println(exception.getMessage());
+        }
     }
 
     public static void main(String[] args) {
