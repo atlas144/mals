@@ -8,6 +8,16 @@ control/main-control-unit/nbdist/
 control/main-control-unit/nbactions.xml
 control/main-control-unit/nb-configuration.xml
 
+### Client ###
+
+**/node_modules
+
+### Sensoric ###
+
+# PCB #
+
+**/*-backups
+
 ### Java ###
 
 # Class Files #
