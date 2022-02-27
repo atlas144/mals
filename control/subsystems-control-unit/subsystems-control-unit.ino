@@ -6,7 +6,7 @@
 #include "sensor.h"
 #include "serializableFloat.h"
 
-const uint8_t frontInterruptPin = 2; backInterruptPin = 3, ssRx = 12, ssTx = 13;
+const uint8_t frontInterruptPin = 2, backInterruptPin = 3, ssRx = 12, ssTx = 13;
 
 volatile bool frontInterrupted = false;
 volatile bool backInterrupted = false;
@@ -70,6 +70,25 @@ void bumperTask() {
   }
 }
 
+void readPacketTask() {
+  while (srsc.isAvailable()) {
+    Packet *packet;
+    
+    if (srsc.readPacket(packet)) {
+      Serial.print(F("[SSC] - OK - packet:"));
+      Serial.println(packet->getPayload());
+      
+      /*switch (packet->getPacketType()) {
+        case 0x60: {
+          
+        }
+      }*/
+    } else {
+      Serial.println(F("[SSC] - ERR - packet reading failed"));
+    }
+  }
+}
+
 void srscLoopTask() {
   srsc.loop();
 }
@@ -117,8 +136,8 @@ void gpsTask() {
 
   if (newData) {
     gps.f_get_position(&lat.number, &lon.number, &age);
-    srsc.writeBinaryPacket(0x67, lat.binary);
-    srsc.writeBinaryPacket(0x68, lon.binary);
+    srsc.writeBinaryPacket(0x67, lat.bynary);
+    srsc.writeBinaryPacket(0x68, lon.bynary);
   }
 }
 
@@ -126,52 +145,66 @@ void setup() {
   Serial.begin(115200);
   
   ss.begin(4800);
-  Serial.println("[SWS] - OK - initialized successfully");
+  Serial.println(F("[SWS] - OK - initialized successfully"));
   
   Wire.begin();
-  Serial.println("[TWI] - OK - initialized successfully");
+  Serial.println(F("[TWI] - OK - initialized successfully"));
   
   srsc.begin();
-  Serial.println("[SSC] - OK - initialized successfully");
+  Serial.println(F("[SSC] - OK - initialized successfully"));
 
-  srsc.definePacketType(0x60, COMMAND, true);
-  Serial.println("[SSC] - OK - \"front bumper\" packet defined successfully");
-  srsc.definePacketType(0x61, COMMAND, true);
-  Serial.println("[SSC] - OK - \"back bumper\" packet defined successfully");
-  srsc.definePacketType(0x62, SHORT);
-  Serial.println("[SSC] - OK - \"lidar data\" packet defined successfully");
-  srsc.definePacketType(0x63, BYTE);
-  Serial.println("[SSC] - OK - \"lidar orientation\" packet defined successfully");
-  srsc.definePacketType(0x64, SHORT);
-  Serial.println("[SSC] - OK - \"front sonars data\" packet defined successfully");
-  srsc.definePacketType(0x65, SHORT);
-  Serial.println("[SSC] - OK - \"back sonars data\" packet defined successfully");
-  srsc.definePacketType(0x66, INT);
-  Serial.println("[SSC] - OK - \"line tracking sensor data\" packet defined successfully");
-  srsc.definePacketType(0x67, INT);
-  Serial.println("[SSC] - OK - \"GPS - lat\" packet defined successfully");
-  srsc.definePacketType(0x68, INT);
-  Serial.println("[SSC] - OK - \"GPS - lon\" packet defined successfully");
+  // Motor packets
+  for (uint8_t i = 0; i < 4; i++) {
+    srsc.definePacketType(0x60 + i * 3, COMMAND, true);
+    srsc.definePacketType(0x61 + i * 3, COMMAND, true);
+    srsc.definePacketType(0x62 + i * 3, BYTE);
+  }
+
+  // Lidar packets
+  srsc.definePacketType(0x72, SHORT);
+  srsc.definePacketType(0x73, BYTE);
+  
+  // Sonars packets
+  for (uint8_t i = 0; i < 2; i++) {
+    srsc.definePacketType(0x74 + i, SHORT);
+  }
+
+  // Line tracking sensor packet
+  srsc.definePacketType(0x76, INT);
+
+  // Bumpers packets
+  for (uint8_t i = 0; i < 2; i++) {
+    srsc.definePacketType(0x77 + i, COMMAND, true);
+  }
+
+  // GPS packets
+  for (uint8_t i = 0; i < 2; i++) {
+    srsc.definePacketType(0x79 + i, INT);
+  }
+  
+  Serial.println(F("[SSC] - OK - packet types registered successfully"));
   
   protorduino.registerTask(&bumperTask, 1, 1);
-  Serial.println("[PRO] - OK - bumperTask registered successfully");
+  Serial.println(F("[PRO] - OK - bumperTask registered successfully"));
   protorduino.registerTask(&srscLoopTask, 1, 2);
-  Serial.println("[PRO] - OK - srscLoopTask registered successfully");
-  protorduino.registerTask(&lidarTask, lidar.getCycleDuration(), 3);
-  Serial.println("[PRO] - OK - lidarTask registered successfully");
-  protorduino.registerTask(&frontSonarsTask, frontSonars.getCycleDuration(), 4);
-  Serial.println("[PRO] - OK - frontSonarsTask registered successfully");
-  protorduino.registerTask(&backSonarsTask, backSonars.getCycleDuration(), 5);
-  Serial.println("[PRO] - OK - backSonarsTask registered successfully");
-  protorduino.registerTask(&lineTrackingSensorTask, lineTrackingSensor.getCycleDuration(), 6);
-  Serial.println("[PRO] - OK - lineTrackingSensorTask registered successfully");
-  protorduino.registerTask(&gpsTask, gpsInterface.getCycleDuration(), 7);
-  Serial.println("[PRO] - OK - gpsTask registered successfully");
+  Serial.println(F("[PRO] - OK - srscLoopTask registered successfully"));
+  protorduino.registerTask(&readPacketTask, 20, 3);
+  Serial.println(F("[PRO] - OK - readPacketTask registered successfully"));
+  protorduino.registerTask(&lidarTask, lidar.getCycleDuration(), 4);
+  Serial.println(F("[PRO] - OK - lidarTask registered successfully"));
+  protorduino.registerTask(&frontSonarsTask, frontSonars.getCycleDuration(), 5);
+  Serial.println(F("[PRO] - OK - frontSonarsTask registered successfully"));
+  protorduino.registerTask(&backSonarsTask, backSonars.getCycleDuration(), 6);
+  Serial.println(F("[PRO] - OK - backSonarsTask registered successfully"));
+  protorduino.registerTask(&lineTrackingSensorTask, lineTrackingSensor.getCycleDuration(), 7);
+  Serial.println(F("[PRO] - OK - lineTrackingSensorTask registered successfully"));
+  protorduino.registerTask(&gpsTask, gpsInterface.getCycleDuration(), 8);
+  Serial.println(F("[PRO] - OK - gpsTask registered successfully"));
 
   attachInterrupt(digitalPinToInterrupt(frontInterruptPin), frontInterrupt, RISING);
-  Serial.println("[INT] - OK - front interrupt registered successfully");
+  Serial.println(F("[INT] - OK - front interrupt registered successfully"));
   attachInterrupt(digitalPinToInterrupt(backInterruptPin), backInterrupt, RISING);
-  Serial.println("[INT] - OK - back interrupt registered successfully");
+  Serial.println(F("[INT] - OK - back interrupt registered successfully"));
 }
 
 void loop() {
