@@ -1,23 +1,18 @@
 #include <Protorduino.h>
 #include <SoftwareSerial.h>   
 #include <TFMPlus.h>
-#include <StepperMotor.h>
+#include <Servo.h>
 #include <Wire.h>
 
-const uint8_t TWI_ADDRESS = 0xA0;
-const uint8_t STEPPER1 = 6;
-const uint8_t STEPPER2 = 7;
-const uint8_t STEPPER3 = 8;
-const uint8_t STEPPER4 = 9;
-
-uint8_t stepDelay = 1;
+const uint8_t TWI_ADDRESS = 0x22;
+const uint8_t SERVO = 9;
 
 Protorduino protorduino(2);
 SoftwareSerial swSerial(10, 11); 
 TFMPlus lidar;
-StepperMotor stepper(STEPPER1, STEPPER2, STEPPER3, STEPPER4, stepDelay);
+Servo servo;
 
-uint8_t data[] = {0, 0, 0};                                 // {motorSteps, distance (byte 0), distance (byte 1)}
+uint8_t data[] = {0, 0, 0};                                 // {angle, distance (byte 0), distance (byte 1)}
 
 int16_t distance = 0;
 int16_t flux = 0;
@@ -25,45 +20,45 @@ int16_t temperature = 0;
 
 bool readSuccess = false;
 
-uint8_t motorSteps = 0;
+uint8_t angle = 90;
 bool motorDirection = true;  // 1 - forward, 0 - backwards
 
 void twiRequestCallback() {
   Wire.write(data, 3);
-  Serial.println("[TWI] - OK - data successfully written");
+  swSerial.println(F("[TWI] - OK - data successfully written"));
 }
 
 void measurementTask() {
   readSuccess = lidar.getData(distance, flux, temperature);
   
   if (readSuccess && flux > 1000) {
-    data[0] = motorSteps;
+    data[0] = angle;
     data[1] = distance & 0xff;
     data[2] = (distance >> 8) & 0xff;
     
-    Serial.print("[LID] - OK - measurement successfull (");
-    Serial.print(distance);
-    Serial.println(")");
+    swSerial.print(F("[LID] - OK - measurement successfull ("));
+    swSerial.print(distance);
+    swSerial.println(F(")"));
   } else {
-    Serial.println("[LID] - ERR - measurement unsuccessfull");
+    swSerial.println(F("[LID] - ERR - measurement unsuccessfull"));
   }
 }
 
 void movementTask() {
   if (motorDirection) {
-    motorSteps++;
-    stepper.moveForward();
-    motorDirection = motorSteps < 127;
-    Serial.print("[STP] - OK - moved forward (angle ");
-    Serial.print(motorSteps);
-    Serial.println(")");
+    angle++;
+    servo.write(angle);
+    motorDirection = angle < 150;
+    swSerial.print(F("[STP] - OK - moved forward (angle "));
+    swSerial.print(angle);
+    swSerial.println(F(")"));
   } else {
-    motorSteps--;
-    stepper.moveBackwards();
-    motorDirection = motorSteps > 0;
-    Serial.print("[STP] - OK - moved backwards (angle ");
-    Serial.print(motorSteps);
-    Serial.println(")");
+    angle--;
+    servo.write(angle);
+    motorDirection = angle < 90;
+    swSerial.print(F("[STP] - OK - moved backwards (angle "));
+    swSerial.print(angle);
+    swSerial.println(F(")"));
   }
 }
 
@@ -72,18 +67,18 @@ void setup() {
   swSerial.begin(115200);
 
   protorduino.registerTask(&measurementTask, 10, 1);
-  Serial.println("[PRO] - OK - measurementTask registered successfully");
+  swSerial.println(F("[PRO] - OK - measurementTask registered successfully"));
   protorduino.registerTask(&movementTask, 8, 2);
-  Serial.println("[PRO] - OK - movementTask registered successfully");
+  swSerial.println(F("[PRO] - OK - movementTask registered successfully"));
   
   Wire.begin(TWI_ADDRESS);
   Wire.onRequest(twiRequestCallback);
-  Serial.println("[TWI] - OK - initialized successfully");
+  swSerial.println(F("[TWI] - OK - initialized successfully"));
   
-  lidar.begin(&swSerial);                                     // lidar starts with default values (baud-rate = 115200 Bd and frame-rate = 100 Hz)
-  Serial.println("[LID] - OK - initialized successfully");
+  lidar.begin(&Serial);                                     // lidar starts with default values (baud-rate = 115200 Bd and frame-rate = 100 Hz)
+  swSerial.println(F("[LID] - OK - initialized successfully"));
 }
 
 void loop() {
-  protorduino.execute();
+  protorduino.loop();
 }

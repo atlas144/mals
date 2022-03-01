@@ -3,19 +3,19 @@
     "GenerationSoftware": {
       "Vendor": "KiCad",
       "Application": "Pcbnew",
-      "Version": "6.0.0"
+      "Version": "6.0.2-378541a8eb~116~ubuntu20.04.1"
     },
-    "CreationDate": "2022-01-08T11:12:03+01:00"
+    "CreationDate": "2022-02-28T20:37:39+01:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
       "Name": "lidar",
       "GUID": "6c696461-722e-46b6-9963-61645f706362",
-      "Revision": "0.1.0"
+      "Revision": "0.3.0"
     },
     "Size": {
-      "X": 51.535,
-      "Y": 48.36
+      "X": 46.455,
+      "Y": 39.47
     },
     "LayerNumber": 2,
     "BoardThickness": 1.6,
