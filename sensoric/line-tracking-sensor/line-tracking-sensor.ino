@@ -1,6 +1,6 @@
 #include <Wire.h>
 
-#define TWI_ADDRESS   0xA3
+#define TWI_ADDRESS   0x23
 #define OPTRON1       14    // A0
 #define OPTRON2       15    // A1
 #define OPTRON3       16    // A2

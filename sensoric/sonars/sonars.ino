@@ -1,7 +1,7 @@
 #include <NewPing.h>
 #include <Wire.h>
 
-const uint8_t TWI_ADDRESS = 0xA1;
+const uint8_t TWI_ADDRESS = 0x21;
 const uint8_t ECHO1 = 7;
 const uint8_t TRIGGER1 = 8;
 const uint8_t ECHO2 = 12;
