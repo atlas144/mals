@@ -6,8 +6,8 @@
 
   (title_block
     (title "Contact sensor")
-    (date "2022-03-07")
-    (rev "0.1.0")
+    (date "2022-03-08")
+    (rev "0.1.1")
     (comment 1 "https://github.com/atlas144/mals")
     (comment 2 "SPDX-License-Identifier: CERN-OHL-S-2.0")
     (comment 3 "Author: Jakub Švarc (jakubsvarc@protonmail.com)")
