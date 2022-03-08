@@ -5,13 +5,13 @@
       "Application": "Pcbnew",
       "Version": "6.0.2-378541a8eb~116~ubuntu20.04.1"
     },
-    "CreationDate": "2022-03-07T20:24:28+01:00"
+    "CreationDate": "2022-03-08T10:00:38+01:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
       "Name": "contact-sensor",
       "GUID": "636f6e74-6163-4742-9d73-656e736f722e",
-      "Revision": "0.1.0"
+      "Revision": "0.1.1"
     },
     "Size": {
       "X": 66.14,
@@ -24,8 +24,8 @@
   "DesignRules": [
     {
       "Layers": "Outer",
-      "PadToPad": 0.2,
-      "PadToTrack": 0.2,
+      "PadToPad": 0.0,
+      "PadToTrack": 0.0,
       "TrackToTrack": 0.2,
       "MinLineWidth": 0.25,
       "TrackToRegion": 0.508,
